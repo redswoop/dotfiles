@@ -8,6 +8,12 @@ case $- in
       *) return;;
 esac
 
+# Hand off to zsh if available
+if [ -x /home/linuxbrew/.linuxbrew/bin/zsh ] && [ -z "$ZSH_VERSION" ]; then
+    export SHELL=/home/linuxbrew/.linuxbrew/bin/zsh
+    exec /home/linuxbrew/.linuxbrew/bin/zsh -l
+fi
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
