@@ -23,13 +23,13 @@ fi
 
 # bat as pager/less replacement
 if command -v bat >/dev/null 2>&1; then
+    export BAT_THEME='Monokai Extended'
+    export BAT_STYLE='numbers,changes,header,grid'
+    export BAT_PAGER='less -RFi --mouse'
     export PAGER='bat'
     export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -l man -p'"
-    export BAT_THEME='Monokai Extended'
-    export LESS='-R -M -i -j5 --mouse'
-    export LESSOPEN='| bat --color=always --style=plain %s'
-    alias cat='bat'
-    alias less='bat'
+    alias cat='bat --paging=never'
+    alias less='bat --paging=always'
 fi
 
 # jk (ps replacement)
