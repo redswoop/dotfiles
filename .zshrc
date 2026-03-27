@@ -83,4 +83,19 @@ setopt no_beep
 command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
+# === Zsh Plugins ===
+# Autosuggestions (gray ghost text from history — right-arrow to accept)
+for f in /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+         /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+         "$HOME/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"; do
+    [ -f "$f" ] && source "$f" && break
+done
+
+# Syntax highlighting (must be last plugin sourced)
+for f in /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+         /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+         "$HOME/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"; do
+    [ -f "$f" ] && source "$f" && break
+done
+
 # Prompt is initialized via starship in .shellrc

@@ -86,6 +86,11 @@ if command -v rg >/dev/null 2>&1; then
     alias grep='rg'
 fi
 
+# lazygit
+if command -v lazygit >/dev/null 2>&1; then
+    alias lg='lazygit'
+fi
+
 # dotfiles management (bare git repo)
 alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
@@ -102,13 +107,17 @@ if [[ $- == *i* ]]; then
   🔎 fd ................... find
   ⚙️  jk ................... ps + ports + tree
   📈 top .................. htop
+  🌳 lg ................... lazygit
   💾 dot .................. dotfiles git
   📖 tldr ................. cheatsheets
+  🔀 git diff ............. delta (side-by-side)
+  📋 jq / yq .............. JSON / YAML
 
   🚀 SHORTCUTS
 
   z <dir>     smart cd      Ctrl+R   fuzzy history
   Ctrl+T      fuzzy files   \rm      bypass alias
+  →           accept ghost suggestion (autosuggestions)
 
 MOTD
 fi
