@@ -7,9 +7,11 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# Homebrew (Linux)
+# Homebrew (Linux — system or local install)
 if [ -d /home/linuxbrew/.linuxbrew ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [ -d "$HOME/.linuxbrew" ]; then
+    eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
 fi
 
 # eza aliases (modern ls replacement)
@@ -65,6 +67,30 @@ if command -v dust >/dev/null 2>&1; then
     alias du='dust'
 else
     alias du='du -h'
+fi
+
+# fzf (fuzzy finder — Ctrl+R for history, Ctrl+T for files)
+if command -v fzf >/dev/null 2>&1; then
+    if [ -n "$ZSH_VERSION" ]; then
+        source <(fzf --zsh)
+    elif [ -n "$BASH_VERSION" ]; then
+        eval "$(fzf --bash)"
+    fi
+fi
+
+# zoxide (smart cd replacement — use 'z' to jump)
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init "${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}")"
+fi
+
+# fd (find replacement)
+if command -v fd >/dev/null 2>&1; then
+    alias find='fd'
+fi
+
+# ripgrep (grep replacement)
+if command -v rg >/dev/null 2>&1; then
+    alias grep='rg'
 fi
 
 # dotfiles management (bare git repo)
