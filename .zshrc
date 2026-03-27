@@ -79,9 +79,4 @@ setopt correct
 setopt interactive_comments
 setopt no_beep
 
-# === Prompt ===
-autoload -Uz vcs_info
-precmd() { vcs_info }
-setopt prompt_subst
-zstyle ':vcs_info:git:*' formats ' %F{cyan}(%b)%f'
-PROMPT='%F{green}%n@%m%f:%F{blue}%~%f${vcs_info_msg_0_}%# '
+# Prompt is initialized via starship in .shellrc

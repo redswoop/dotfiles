@@ -1,0 +1,47 @@
+# Starship prompt config
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$golang\
+$nodejs\
+$python\
+$rust\
+$cmd_duration\
+$line_break\
+$character"""
+
+[directory]
+truncation_length = 4
+truncate_to_repo = true
+
+[git_branch]
+format = " [$branch]($style)"
+style = "cyan"
+
+[git_status]
+format = "[$all_status$ahead_behind]($style) "
+style = "red"
+
+[golang]
+format = "[$symbol$version]($style) "
+symbol = "go "
+
+[nodejs]
+format = "[$symbol$version]($style) "
+
+[python]
+format = "[$symbol$version]($style) "
+
+[rust]
+format = "[$symbol$version]($style) "
+
+[cmd_duration]
+min_time = 3_000
+format = "[$duration]($style) "
+style = "yellow"
+
+[character]
+success_symbol = "[>](green)"
+error_symbol = "[>](red)"
