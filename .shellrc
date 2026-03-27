@@ -50,6 +50,11 @@ if command -v jk >/dev/null 2>&1; then
     alias jk='jk -p -t'
 fi
 
+# Safe file operations (prompt before overwrite/delete)
+alias cp='cp -i'
+alias mv='mv -i'
+alias rm='rm -i'
+
 # htop (top replacement)
 if command -v htop >/dev/null 2>&1; then
     alias top='htop'
