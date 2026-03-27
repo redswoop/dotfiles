@@ -79,4 +79,8 @@ setopt correct
 setopt interactive_comments
 setopt no_beep
 
+# fzf and zoxide (must come after compinit)
+command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+
 # Prompt is initialized via starship in .shellrc

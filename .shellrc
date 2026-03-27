@@ -69,18 +69,11 @@ else
     alias du='du -h'
 fi
 
-# fzf (fuzzy finder — Ctrl+R for history, Ctrl+T for files)
-if command -v fzf >/dev/null 2>&1; then
-    if [ -n "$ZSH_VERSION" ]; then
-        source <(fzf --zsh)
-    elif [ -n "$BASH_VERSION" ]; then
-        eval "$(fzf --bash)"
-    fi
-fi
-
-# zoxide (smart cd replacement — use 'z' to jump)
-if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init "${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}")"
+# fzf and zoxide shell integration
+# For zsh, these are loaded in .zshrc (after compinit)
+if [ -n "$BASH_VERSION" ]; then
+    command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
+    command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
 fi
 
 # fd (find replacement)
