@@ -19,6 +19,12 @@ if command -v eza >/dev/null 2>&1; then
     alias la='eza -la'
     alias ll='eza -la'
     alias lt='eza --tree'
+elif [[ "$(uname -o 2>/dev/null)" == "Msys" ]]; then
+    # Git-bash on Windows
+    alias ls='ls --color=auto --show-control-chars --hide=NTUSER* --hide=ntuser*'
+    alias l='ls -l'
+    alias la='ls -la'
+    alias ll='ls -la'
 else
     alias ls='ls --color=auto'
     alias l='ls -l'
