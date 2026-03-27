@@ -50,6 +50,18 @@ if command -v jk >/dev/null 2>&1; then
     alias jk='jk -p -t'
 fi
 
+# htop (top replacement)
+if command -v htop >/dev/null 2>&1; then
+    alias top='htop'
+fi
+
+# dust (du replacement)
+if command -v dust >/dev/null 2>&1; then
+    alias du='dust'
+else
+    alias du='du -h'
+fi
+
 # dotfiles management (bare git repo)
 alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
