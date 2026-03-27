@@ -1,0 +1,52 @@
+# GNU Readline config — used by bash, python, psql, and other readline apps
+
+# Case-insensitive tab completion
+set completion-ignore-case on
+
+# Treat hyphens and underscores as equivalent for completion
+set completion-map-case on
+
+# Show all completions on first tab (no double-tab)
+set show-all-if-ambiguous on
+
+# Show all completions if there's no partial match
+set show-all-if-unmodified on
+
+# Add a trailing slash for symlinked directories
+set mark-symlinked-directories on
+
+# Color files by type during completion (like ls)
+set colored-stats on
+
+# Color the common prefix in completions
+set colored-completion-prefix on
+
+# Show file type indicators in completion (/ for dirs, @ for symlinks, etc.)
+set visible-stats on
+
+# Don't page through completions
+set page-completions off
+
+# Don't ring the bell on ambiguous completion — flash the screen instead
+set bell-style visible
+
+# Enable bracketed paste (prevents accidental execution of pasted commands)
+set enable-bracketed-paste on
+
+# Up/down searches history using current prefix
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# Ctrl-left/right to move by word
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+
+# Alt-left/right to move by word (macOS terminal compatibility)
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+
+# Ctrl-delete to kill word forward
+"\e[3;5~": kill-word
+
+# Alt-. to insert last argument from previous command (like zsh)
+"\e.": yank-last-arg

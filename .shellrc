@@ -1,0 +1,41 @@
+# shellrc — shared config sourced by both .bashrc and .zshrc
+
+# PATH
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Homebrew (Linux)
+if [ -d /home/linuxbrew/.linuxbrew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+# eza aliases (modern ls replacement)
+if command -v eza >/dev/null 2>&1; then
+    alias ls='eza'
+    alias l='eza -l'
+    alias la='eza -la'
+    alias ll='eza -la'
+    alias lt='eza --tree'
+fi
+
+# bat as pager/less replacement
+if command -v bat >/dev/null 2>&1; then
+    export PAGER='bat'
+    export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -l man -p'"
+    export BAT_THEME='Monokai Extended'
+    export LESS='-R -M -i -j5 --mouse'
+    export LESSOPEN='| bat --color=always --style=plain %s'
+    alias cat='bat'
+    alias less='bat'
+fi
+
+# jk (ps replacement)
+if command -v jk >/dev/null 2>&1; then
+    alias jk='jk -p -t'
+fi
+
+# dotfiles management (bare git repo)
+alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
