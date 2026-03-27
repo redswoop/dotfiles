@@ -89,6 +89,30 @@ fi
 # dotfiles management (bare git repo)
 alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
+# MOTD — quick cheatsheet (only for interactive shells)
+if [[ $- == *i* ]]; then
+    cat <<'MOTD'
+
+  ⚡ TOOLKIT
+
+  📂 ls l la lt ........... eza
+  📄 cat less ............. bat
+  📊 du ................... dust
+  🔍 rg ................... ripgrep
+  🔎 fd ................... find
+  ⚙️  jk ................... ps + ports + tree
+  📈 top .................. htop
+  💾 dot .................. dotfiles git
+  📖 tldr ................. cheatsheets
+
+  🚀 SHORTCUTS
+
+  z <dir>     smart cd      Ctrl+R   fuzzy history
+  Ctrl+T      fuzzy files   \rm      bypass alias
+
+MOTD
+fi
+
 # Starship prompt (cross-shell)
 if command -v starship >/dev/null 2>&1; then
     if [ -n "$ZSH_VERSION" ]; then
