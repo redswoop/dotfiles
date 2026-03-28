@@ -7,11 +7,13 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# Homebrew (Linux — system or local install)
-if [ -d /home/linuxbrew/.linuxbrew ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [ -d "$HOME/.linuxbrew" ]; then
-    eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+# Homebrew (Linux/macOS — skip on git-bash)
+if [ -z "${MSYSTEM:-}" ]; then
+    if [ -d /home/linuxbrew/.linuxbrew ]; then
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    elif [ -d "$HOME/.linuxbrew" ]; then
+        eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+    fi
 fi
 
 # eza aliases (modern ls replacement)
