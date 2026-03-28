@@ -9,8 +9,10 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Package manager PATH setup
 if [ -n "${MSYSTEM:-}" ]; then
-    # Scoop (git-bash on Windows)
-    [ -d "$USERPROFILE/scoop/shims" ] && export PATH="$USERPROFILE/scoop/shims:$PATH"
+    # Scoop (git-bash on Windows) — convert Windows path to unix-style
+    _scoop_shims="$(cygpath -u "$USERPROFILE/scoop/shims" 2>/dev/null || echo "$HOME/scoop/shims")"
+    [ -d "$_scoop_shims" ] && export PATH="$_scoop_shims:$PATH"
+    unset _scoop_shims
 else
     # Homebrew (Linux/macOS)
     if [ -d /home/linuxbrew/.linuxbrew ]; then
