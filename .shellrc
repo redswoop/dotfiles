@@ -7,8 +7,12 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# Homebrew (Linux/macOS — skip on git-bash)
-if [ -z "${MSYSTEM:-}" ]; then
+# Package manager PATH setup
+if [ -n "${MSYSTEM:-}" ]; then
+    # Scoop (git-bash on Windows)
+    [ -d "$USERPROFILE/scoop/shims" ] && export PATH="$USERPROFILE/scoop/shims:$PATH"
+else
+    # Homebrew (Linux/macOS)
     if [ -d /home/linuxbrew/.linuxbrew ]; then
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     elif [ -d "$HOME/.linuxbrew" ]; then
