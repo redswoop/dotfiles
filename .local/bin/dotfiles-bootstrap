@@ -25,14 +25,20 @@ is_gitbash() {
 # --- Scoop (git-bash / Windows) ---
 
 ensure_scoop() {
-    if command -v scoop >/dev/null 2>&1; then
+    if ! command -v scoop >/dev/null 2>&1; then
+        info "Installing Scoop..."
+        powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; irm get.scoop.sh | iex"
+        # Reload PATH so scoop is visible in this session
+        export PATH="$USERPROFILE/scoop/shims:$PATH"
+    else
         info "Scoop already installed"
-        return
     fi
-    info "Installing Scoop..."
-    powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; irm get.scoop.sh | iex"
-    # Reload PATH so scoop is visible in this session
-    export PATH="$USERPROFILE/scoop/shims:$PATH"
+
+    # extras bucket is needed for lazygit (and others)
+    if ! scoop bucket list 2>/dev/null | grep -q extras; then
+        info "Adding Scoop extras bucket..."
+        scoop bucket add extras
+    fi
 }
 
 install_tools_scoop() {
@@ -62,8 +68,15 @@ install_tools_scoop() {
     if [[ ${#to_install[@]} -eq 0 ]]; then
         info "All tools already installed!"
     else
-        info "Installing: ${to_install[*]}"
-        scoop install "${to_install[@]}"
+        local failed=()
+        for pkg in "${to_install[@]}"; do
+            if ! scoop install "$pkg"; then
+                failed+=("$pkg")
+            fi
+        done
+        if [[ ${#failed[@]} -gt 0 ]]; then
+            warn "Failed to install: ${failed[*]}"
+        fi
     fi
 }
 
