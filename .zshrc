@@ -99,3 +99,6 @@ for f in /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 done
 
 # Prompt is initialized via starship in .shellrc
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
