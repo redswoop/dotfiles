@@ -13,3 +13,7 @@
 	conflictstyle = diff3
 [diff]
 	colorMoved = default
+[url "bbgithub:"]
+	insteadof = https://bbgithub.dev.bloomberg.com/
+[init]
+	defaultBranch = main
