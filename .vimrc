@@ -8,7 +8,8 @@ set encoding=utf-8
 
 " === Appearance ===
 set background=dark
-colorscheme habamax
+" habamax ships with Vim 9.0+; fall back silently on older vim (RHEL 8/9 etc.)
+silent! colorscheme habamax
 set number
 set relativenumber
 set cursorline
@@ -54,7 +55,10 @@ set wildignore+=*.o,*.pyc,*.swp,*/.git/*,*/node_modules/*
 set backspace=indent,eol,start
 set virtualedit=block
 set mouse=a
-set ttymouse=sgr
+" ttymouse is terminal-vim only — errors in gvim/MacVim GUI
+if !has('gui_running') && exists('+ttymouse')
+    set ttymouse=sgr
+endif
 set autochdir
 set hidden
 set autoread

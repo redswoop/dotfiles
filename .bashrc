@@ -8,10 +8,14 @@ case $- in
       *) return;;
 esac
 
-# Hand off to zsh if available
-if [ -x /home/linuxbrew/.linuxbrew/bin/zsh ] && [ -z "$ZSH_VERSION" ]; then
-    export SHELL=/home/linuxbrew/.linuxbrew/bin/zsh
-    exec /home/linuxbrew/.linuxbrew/bin/zsh -l
+# Hand off to zsh if available (skip on git-bash where zsh isn't a real option)
+if [ -z "$ZSH_VERSION" ] && [ -z "${MSYSTEM:-}" ]; then
+    _zsh="$(command -v zsh || true)"
+    if [ -n "$_zsh" ] && [ -x "$_zsh" ]; then
+        export SHELL="$_zsh"
+        exec "$_zsh" -l
+    fi
+    unset _zsh
 fi
 
 # don't put duplicate lines or lines starting with space in the history.

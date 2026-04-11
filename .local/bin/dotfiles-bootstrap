@@ -20,6 +20,32 @@ is_gitbash() {
     [[ "${MSYSTEM:-}" =~ ^(MINGW|MSYS|CLANGARM) ]] || [[ "$(uname -s)" =~ ^(MINGW|MSYS) ]]
 }
 
+# --- Linux prereq check ---
+# Linuxbrew needs a working build toolchain. On bare RHEL/Debian boxes these
+# aren't installed by default; warn loudly rather than fail deep in a brew build.
+check_linux_prereqs() {
+    [[ "$(uname -s)" != "Linux" ]] && return 0
+
+    local missing=()
+    for cmd in git curl file gcc make; do
+        command -v "$cmd" >/dev/null 2>&1 || missing+=("$cmd")
+    done
+
+    [[ ${#missing[@]} -eq 0 ]] && return 0
+
+    warn "Missing build prerequisites: ${missing[*]}"
+    if   [[ -r /etc/redhat-release ]] || command -v dnf >/dev/null 2>&1; then
+        err "Install with: sudo dnf groupinstall -y 'Development Tools' && sudo dnf install -y curl file git"
+    elif command -v apt >/dev/null 2>&1; then
+        err "Install with: sudo apt update && sudo apt install -y build-essential curl file git"
+    elif command -v zypper >/dev/null 2>&1; then
+        err "Install with: sudo zypper install -y -t pattern devel_basis && sudo zypper install -y curl file git"
+    else
+        err "Install a build toolchain (gcc, make), plus curl, file, git, before continuing."
+    fi
+    exit 1
+}
+
 # --- Scoop (git-bash / Windows) ---
 
 ensure_scoop() {
@@ -227,6 +253,9 @@ if is_gitbash; then
 
     warn "Zsh plugins skipped (not applicable on git-bash)"
 else
+    check_linux_prereqs
+    echo
+
     ensure_brew
     echo
 

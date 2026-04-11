@@ -29,14 +29,21 @@ if command -v eza >/dev/null 2>&1; then
     alias la='eza -la'
     alias ll='eza -la'
     alias lt='eza --tree'
-elif [[ "$(uname -o 2>/dev/null)" == "Msys" ]]; then
-    # Git-bash on Windows
-    alias ls='ls --color=auto --show-control-chars --hide=NTUSER* --hide=ntuser*'
-    alias l='ls -l'
-    alias la='ls -la'
-    alias ll='ls -la'
 else
-    alias ls='ls --color=auto'
+    # Fallback: pick the right color flag for this ls implementation.
+    # BSD ls (macOS) uses -G; GNU ls (Linux, git-bash) uses --color=auto.
+    case "$(uname -s)" in
+        Darwin)
+            export CLICOLOR=1
+            alias ls='ls -G'
+            ;;
+        MINGW*|MSYS*)
+            alias ls='ls --color=auto --show-control-chars --hide=NTUSER* --hide=ntuser*'
+            ;;
+        *)
+            alias ls='ls --color=auto'
+            ;;
+    esac
     alias l='ls -l'
     alias la='ls -la'
     alias ll='ls -la'
