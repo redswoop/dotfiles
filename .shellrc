@@ -65,33 +65,13 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
-# btop (top replacement)
-if command -v btop >/dev/null 2>&1; then
-    alias top='btop'
-fi
-
-# dust (du replacement)
-if command -v dust >/dev/null 2>&1; then
-    alias du='dust'
-else
-    alias du='du -h'
-fi
+alias du='du -h'
 
 # fzf and zoxide shell integration
 # For zsh, these are loaded in .zshrc (after compinit)
 if [ -n "$BASH_VERSION" ]; then
     command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
     command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
-fi
-
-# fd (find replacement)
-if command -v fd >/dev/null 2>&1; then
-    alias find='fd'
-fi
-
-# ripgrep (grep replacement)
-if command -v rg >/dev/null 2>&1; then
-    alias grep='rg'
 fi
 
 # lazygit
@@ -110,11 +90,11 @@ if [[ $- == *i* ]]; then
 
   📂 ls l la lt ........... eza
   📄 cat less ............. bat
-  📊 du ................... dust
-  🔍 rg ................... ripgrep
-  🔎 fd ................... find
+  📊 dust ................. du replacement
+  🔍 rg ................... ripgrep (grep replacement)
+  🔎 fd ................... find replacement
   ⚙️  jk ................... ps + ports + tree
-  📈 top .................. btop
+  📈 btop ................. top replacement
   🌳 lg ................... lazygit
   💾 dot .................. dotfiles git
   📖 tldr ................. cheatsheets
