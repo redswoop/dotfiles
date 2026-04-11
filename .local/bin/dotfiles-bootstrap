@@ -158,6 +158,44 @@ install_zsh_plugins() {
     fi
 }
 
+# --- jk (GitHub release binary) ---
+
+install_jk() {
+    if command -v jk >/dev/null 2>&1; then
+        printf '  ✓ jk (already installed)\n'
+        return
+    fi
+
+    info "Installing jk from GitHub..."
+    local os arch
+    os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+    arch="$(uname -m)"
+    case "$arch" in
+        x86_64)  arch="amd64" ;;
+        aarch64|arm64) arch="arm64" ;;
+        *) err "Unsupported architecture: $arch"; return 1 ;;
+    esac
+
+    local tarball="jk_${os}_${arch}.tar.gz"
+    local url
+    url="$(gh release view --repo redswoop/jk --json assets --jq ".assets[] | select(.name == \"$tarball\") | .url")"
+
+    if [[ -z "$url" ]]; then
+        err "No jk release found for ${os}/${arch}"
+        return 1
+    fi
+
+    mkdir -p "$HOME/.local/bin"
+    local tmp
+    tmp="$(mktemp -d)"
+    curl -fsSL "$url" -o "$tmp/$tarball"
+    tar -xzf "$tmp/$tarball" -C "$tmp"
+    mv "$tmp/jk" "$HOME/.local/bin/jk"
+    chmod +x "$HOME/.local/bin/jk"
+    rm -rf "$tmp"
+    info "jk installed to ~/.local/bin/jk"
+}
+
 # --- Platform extras ---
 
 platform_extras() {
@@ -196,6 +234,9 @@ else
     echo
 
     install_zsh_plugins
+    echo
+
+    install_jk
     echo
 
     platform_extras
