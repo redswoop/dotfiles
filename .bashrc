@@ -123,3 +123,5 @@ if ! shopt -oq posix; then
 fi
 # Source shared shell config
 [ -f ~/.shellrc ] && source ~/.shellrc
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
