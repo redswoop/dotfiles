@@ -65,9 +65,9 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
 
-# htop (top replacement)
-if command -v htop >/dev/null 2>&1; then
-    alias top='htop'
+# btop (top replacement)
+if command -v btop >/dev/null 2>&1; then
+    alias top='btop'
 fi
 
 # dust (du replacement)
@@ -114,7 +114,7 @@ if [[ $- == *i* ]]; then
   🔍 rg ................... ripgrep
   🔎 fd ................... find
   ⚙️  jk ................... ps + ports + tree
-  📈 top .................. htop
+  📈 top .................. btop
   🌳 lg ................... lazygit
   💾 dot .................. dotfiles git
   📖 tldr ................. cheatsheets

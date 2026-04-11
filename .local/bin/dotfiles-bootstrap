@@ -3,11 +3,11 @@ set -euo pipefail
 
 # dotfiles-bootstrap — install all the nice tools on a fresh machine
 
-TOOLS=(eza bat dust htop fd ripgrep fzf zoxide tlrc starship jq yq git-delta lazygit)
+TOOLS=(eza bat dust btop fd ripgrep fzf zoxide tlrc starship jq yq git-delta lazygit)
 ZSH_PLUGINS=(zsh-autosuggestions zsh-syntax-highlighting)
 
 # Tools that aren't available or don't make sense on Windows
-SKIP_ON_WINDOWS=(htop)
+SKIP_ON_WINDOWS=(btop)
 
 # Brew name → Scoop name (only where they differ)
 # Declared inside install_tools_scoop to avoid bash 3.x issues on macOS
