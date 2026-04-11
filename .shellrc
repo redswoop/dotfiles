@@ -89,9 +89,9 @@ fi
 # dotfiles management (bare git repo)
 alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
-# MOTD — quick cheatsheet (only for interactive shells)
-if [[ $- == *i* ]]; then
-    cat <<'MOTD'
+# Toolkit cheatsheet — shown at login and on-demand via `cheat`
+cheat() {
+    cat <<'CHEAT'
 
   ⚡ TOOLKIT
 
@@ -101,7 +101,7 @@ if [[ $- == *i* ]]; then
   🔍 rg ................... ripgrep (grep replacement)
   🔎 fd ................... find replacement
   ⚙️  jk ................... ps + ports + tree
-  📈 btop ................. top replacement
+  📈 btop / htop .......... top replacements
   🌳 lg ................... lazygit
   💾 dot .................. dotfiles git
   📖 tldr ................. cheatsheets
@@ -114,8 +114,11 @@ if [[ $- == *i* ]]; then
   Ctrl+T      fuzzy files   \rm      bypass alias
   →           accept ghost suggestion (autosuggestions)
 
-MOTD
-fi
+CHEAT
+}
+
+# Show cheatsheet as MOTD on interactive shells
+[[ $- == *i* ]] && cheat
 
 # Starship prompt (cross-shell)
 if command -v starship >/dev/null 2>&1; then
