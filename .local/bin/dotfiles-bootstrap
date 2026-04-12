@@ -25,6 +25,7 @@ is_gitbash() {
 # aren't installed by default; warn loudly rather than fail deep in a brew build.
 check_linux_prereqs() {
     [[ "$(uname -s)" != "Linux" ]] && return 0
+    command -v brew >/dev/null 2>&1 && return 0
 
     local missing=()
     for cmd in git curl file gcc make; do
