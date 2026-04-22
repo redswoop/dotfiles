@@ -1,0 +1,180 @@
+#compdef claude
+# Zsh completion for Claude Code CLI
+
+_claude_models() {
+  local -a models=(
+    'sonnet:Claude Sonnet (latest)'
+    'opus:Claude Opus (latest)'
+    'haiku:Claude Haiku (latest)'
+    'claude-sonnet-4-6:Claude Sonnet 4.6'
+    'claude-opus-4-6:Claude Opus 4.6'
+    'claude-haiku-4-5-20251001:Claude Haiku 4.5'
+  )
+  _describe 'model' models
+}
+
+_claude_permission_modes() {
+  local -a modes=(
+    'default:Default permission mode'
+    'auto:Auto-approve safe actions'
+    'acceptEdits:Auto-accept file edits'
+    'bypassPermissions:Bypass all permissions'
+    'dontAsk:Do not ask for permissions'
+    'plan:Plan mode'
+  )
+  _describe 'permission mode' modes
+}
+
+_claude_output_formats() {
+  local -a formats=(
+    'text:Plain text output'
+    'json:Single JSON result'
+    'stream-json:Realtime streaming JSON'
+  )
+  _describe 'output format' formats
+}
+
+_claude_input_formats() {
+  local -a formats=(
+    'text:Plain text input'
+    'stream-json:Realtime streaming input'
+  )
+  _describe 'input format' formats
+}
+
+# --- Subcommand completions ---
+
+_claude_auth() {
+  local -a subcmds=(
+    'login:Sign in to your Anthropic account'
+    'logout:Log out from your Anthropic account'
+    'status:Show authentication status'
+    'help:Display help for command'
+  )
+  _describe 'auth command' subcmds
+}
+
+_claude_mcp() {
+  local -a subcmds=(
+    'add:Add an MCP server'
+    'add-from-claude-desktop:Import MCP servers from Claude Desktop'
+    'add-json:Add an MCP server with a JSON string'
+    'get:Get details about an MCP server'
+    'list:List configured MCP servers'
+    'remove:Remove an MCP server'
+    'reset-project-choices:Reset approved/rejected project-scoped servers'
+    'serve:Start the Claude Code MCP server'
+    'help:Display help for command'
+  )
+  _describe 'mcp command' subcmds
+}
+
+_claude_plugin() {
+  local -a subcmds=(
+    'install:Install a plugin from a marketplace'
+    'uninstall:Uninstall an installed plugin'
+    'list:List installed plugins'
+    'enable:Enable a disabled plugin'
+    'disable:Disable an enabled plugin'
+    'update:Update a plugin to latest version'
+    'marketplace:Manage Claude Code marketplaces'
+    'validate:Validate a plugin or marketplace manifest'
+    'help:Display help for command'
+  )
+  _describe 'plugin command' subcmds
+}
+
+_claude() {
+  local context state state_descr line
+  typeset -A opt_args
+
+  _arguments -C \
+    '(-h --help)'{-h,--help}'[Display help]' \
+    '(-v --version)'{-v,--version}'[Output version number]' \
+    '(-p --print)'{-p,--print}'[Print response and exit]' \
+    '(-c --continue)'{-c,--continue}'[Continue most recent conversation]' \
+    '(-r --resume)'{-r,--resume}'=[Resume conversation by session ID or search]:session' \
+    '(-n --name)'{-n,--name}'=[Set session display name]:name' \
+    '(-d --debug)'{-d,--debug}'=[Enable debug mode with optional filter]:filter' \
+    '(-w --worktree)'{-w,--worktree}'=[Create git worktree for session]:name' \
+    '--model=[Model for the session]:model:_claude_models' \
+    '--fallback-model=[Fallback model when default is overloaded]:model:_claude_models' \
+    '--permission-mode=[Permission mode]:mode:_claude_permission_modes' \
+    '--output-format=[Output format (--print only)]:format:_claude_output_formats' \
+    '--input-format=[Input format (--print only)]:format:_claude_input_formats' \
+    '--system-prompt=[System prompt for the session]:prompt' \
+    '--append-system-prompt=[Append to default system prompt]:prompt' \
+    '--add-dir=[Additional directories for tool access]:directory:_directories' \
+    '--allowedTools=[Tools to allow]:tools' \
+    '--allowed-tools=[Tools to allow]:tools' \
+    '--disallowedTools=[Tools to deny]:tools' \
+    '--disallowed-tools=[Tools to deny]:tools' \
+    '--tools=[Specify available tools]:tools' \
+    '--mcp-config=[Load MCP servers from JSON files]:config:_files' \
+    '--strict-mcp-config[Only use MCP servers from --mcp-config]' \
+    '--settings=[Path to settings JSON file or JSON string]:settings:_files' \
+    '--setting-sources=[Setting sources to load]:sources' \
+    '--json-schema=[JSON Schema for structured output]:schema' \
+    '--max-budget-usd=[Maximum dollar amount for API calls]:amount' \
+    '--session-id=[Use specific session ID]:uuid' \
+    '--agent=[Agent for the session]:agent' \
+    '--agents=[JSON defining custom agents]:json' \
+    '--effort=[Effort level]:level:(low medium high max)' \
+    '--betas=[Beta headers for API requests]:betas' \
+    '--file=[File resources to download]:spec' \
+    '--plugin-dir=[Load plugins from directory]:directory:_directories' \
+    '--debug-file=[Write debug logs to file]:path:_files' \
+    '--tmux[Create tmux session for worktree]' \
+    '--ide[Connect to IDE on startup]' \
+    '--no-chrome[Disable Chrome integration]' \
+    '--chrome[Enable Chrome integration]' \
+    '--bare[Minimal mode\: skip hooks, LSP, plugins]' \
+    '--brief[Enable SendUserMessage tool]' \
+    '--verbose[Override verbose mode setting]' \
+    '--fork-session[Create new session ID when resuming]' \
+    '--from-pr=[Resume session linked to PR]:pr' \
+    '--no-session-persistence[Disable session persistence]' \
+    '--dangerously-skip-permissions[Bypass all permission checks]' \
+    '--allow-dangerously-skip-permissions[Enable bypass option without default]' \
+    '--exclude-dynamic-system-prompt-sections[Move per-machine sections to first user message]' \
+    '--include-hook-events[Include hook lifecycle events in output]' \
+    '--include-partial-messages[Include partial message chunks]' \
+    '--replay-user-messages[Re-emit user messages on stdout]' \
+    '--remote-control-session-name-prefix=[Prefix for remote control session names]:prefix' \
+    '1: :->cmd_or_prompt' \
+    '*:: :->args'
+
+  case "$state" in
+    cmd_or_prompt)
+      local -a commands=(
+        'agents:List configured agents'
+        'auth:Manage authentication'
+        'auto-mode:Inspect auto mode classifier configuration'
+        'doctor:Check auto-updater health'
+        'install:Install Claude Code native build'
+        'mcp:Configure and manage MCP servers'
+        'plugin:Manage Claude Code plugins'
+        'setup-token:Set up a long-lived authentication token'
+        'update:Check for updates and install'
+        'upgrade:Check for updates and install'
+      )
+      _describe 'command' commands
+      ;;
+    args)
+      case "${line[1]}" in
+        auth) _claude_auth ;;
+        mcp) _claude_mcp ;;
+        plugin|plugins) _claude_plugin ;;
+        install)
+          _arguments \
+            '--force[Force installation]' \
+            '1:target:(stable latest)' ;;
+        agents)
+          _arguments \
+            '--setting-sources=[Setting sources]:sources' ;;
+      esac
+      ;;
+  esac
+}
+
+_claude "$@"

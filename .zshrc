@@ -15,6 +15,7 @@ setopt hist_ignore_space
 setopt hist_reduce_blanks
 
 # === Completion ===
+fpath=(~/.zsh/completions $fpath)
 autoload -Uz compinit && compinit
 
 # Case-insensitive, then partial-word, then substring matching
