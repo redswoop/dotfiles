@@ -1,5 +1,16 @@
 # shellrc — shared config sourced by both .bashrc and .zshrc
 
+# Is a human at the keyboard? AI agents (Claude Code & co.) run these rc files
+# too, then trip over ls→eza, cat→bat, and rm -i (no tty → reads EOF as "no",
+# deletes nothing, exits 0). Anything that SHADOWS a standard command or needs
+# a real terminal is gated on this. Additive aliases (l, la, lt, z, lg…) are not.
+# Claude Code sets CLAUDECODE=1; for agents that don't self-identify, put
+# SHELL_PLAIN=1 in their env config.
+_is_human() {
+    case $- in *i*) ;; *) return 1 ;; esac
+    [ -z "${CLAUDECODE:-}${SHELL_PLAIN:-}" ]
+}
+
 # PATH
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
@@ -67,7 +78,7 @@ fi
 
 # eza aliases (modern ls replacement)
 if command -v eza >/dev/null 2>&1; then
-    alias ls='eza'
+    _is_human && alias ls='eza'
     alias l='eza -l'
     alias la='eza -la'
     alias ll='eza -la'
@@ -93,7 +104,10 @@ else
 fi
 
 # bat as pager/less replacement
-if command -v bat >/dev/null 2>&1; then
+if ! _is_human; then
+    # agents: never block on a pager
+    export PAGER='cat' GIT_PAGER='cat' MANPAGER='cat'
+elif command -v bat >/dev/null 2>&1; then
     export BAT_THEME='Monokai Extended'
     export BAT_STYLE='numbers,changes,header,grid'
     export BAT_PAGER='less -RFi --mouse'
@@ -110,10 +124,13 @@ if command -v jk >/dev/null 2>&1; then
     alias jk='jk -p -t'
 fi
 
-# Safe file operations (prompt before overwrite/delete)
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='rm -i'
+# Safe file operations (prompt before overwrite/delete) — humans only; an
+# agent's rm -i has no tty to answer and silently does nothing.
+if _is_human; then
+    alias cp='cp -i'
+    alias mv='mv -i'
+    alias rm='rm -i'
+fi
 
 alias du='du -h'
 
@@ -174,14 +191,14 @@ cheat() {
 CHEAT
 }
 
-# Show cheatsheet as MOTD on interactive shells
-if [[ $- == *i* ]]; then
+# Show cheatsheet as MOTD on interactive (human) shells
+if _is_human; then
     cheat
     command -v _brew_outdated_check >/dev/null 2>&1 && _brew_outdated_check
 fi
 
-# Starship prompt (cross-shell)
-if command -v starship >/dev/null 2>&1; then
+# Starship prompt (cross-shell) — humans only
+if _is_human && command -v starship >/dev/null 2>&1; then
     if [ -n "$ZSH_VERSION" ]; then
         eval "$(starship init zsh)"
     elif [ -n "$BASH_VERSION" ]; then

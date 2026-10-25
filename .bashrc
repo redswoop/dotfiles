@@ -9,7 +9,8 @@ case $- in
 esac
 
 # Hand off to zsh if available (skip on git-bash where zsh isn't a real option)
-if [ -z "$ZSH_VERSION" ] && [ -z "${MSYSTEM:-}" ]; then
+# (never for agents — an agent that asked for bash should get bash)
+if [ -z "$ZSH_VERSION" ] && [ -z "${MSYSTEM:-}" ] && [ -z "${CLAUDECODE:-}${SHELL_PLAIN:-}" ]; then
     _zsh="$(command -v zsh || true)"
     if [ -n "$_zsh" ] && [ -x "$_zsh" ]; then
         export SHELL="$_zsh"
@@ -128,4 +129,5 @@ fi
 # Source shared shell config
 [ -f ~/.shellrc ] && source ~/.shellrc
 
-test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+# iTerm2 integration prints OSC escapes into every shell — humans only
+_is_human && test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"

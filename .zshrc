@@ -76,7 +76,7 @@ bindkey "^[[3;5~" kill-word
 
 # === Options ===
 setopt auto_cd
-setopt correct
+_is_human && setopt correct   # "did you mean?" prompts hang an agent
 setopt interactive_comments
 setopt no_beep
 
@@ -84,24 +84,27 @@ setopt no_beep
 command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
-# === Zsh Plugins ===
-# Autosuggestions (gray ghost text from history — right-arrow to accept)
-for f in /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
-         /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
-         "$HOME/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"; do
-    [ -f "$f" ] && source "$f" && break
-done
+# === Zsh Plugins === (humans only — zle widgets, useless without a terminal)
+if _is_human; then
+    # Autosuggestions (gray ghost text from history — right-arrow to accept)
+    for f in /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+             /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+             "$HOME/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"; do
+        [ -f "$f" ] && source "$f" && break
+    done
 
-# Syntax highlighting (must be last plugin sourced)
-for f in /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
-         /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
-         "$HOME/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"; do
-    [ -f "$f" ] && source "$f" && break
-done
+    # Syntax highlighting (must be last plugin sourced)
+    for f in /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+             /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+             "$HOME/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"; do
+        [ -f "$f" ] && source "$f" && break
+    done
+fi
 
 # Prompt is initialized via starship in .shellrc
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# iTerm2 integration prints OSC escapes into every shell — humans only
+_is_human && test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
