@@ -1,2 +1,6 @@
 # Ignore everything by default — only track what's explicitly added
 *
+
+# Never track agent memory/config — personal context, not shell config.
+# (Belt-and-suspenders on top of the allow-list; blocks `dot add -f` by accident.)
+.claude/

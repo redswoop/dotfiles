@@ -22,3 +22,8 @@ gh auth login
 - **Prompt**: [Starship](https://starship.rs) with nerd font icons
 - **Tools**: eza, bat, delta, fd, ripgrep, fzf, zoxide, dust, htop, lazygit, jq, yq
 - **Bootstrap**: auto-installs everything via Homebrew (macOS/Linux) or Scoop (Windows)
+
+## Deliberately not tracked
+
+- `~/.claude/` — AI-agent memory/config. Personal context, not shell config; this repo is public.
+- `~/.gitconfig.local` — machine-specific git config (credential helpers). Pulled in via `[include]`.
