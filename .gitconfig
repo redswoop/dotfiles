@@ -17,3 +17,7 @@
 	insteadof = https://bbgithub.dev.bloomberg.com/
 [init]
 	defaultBranch = main
+# Machine-specific config (credential helpers, etc.) — not tracked.
+# git silently ignores this include when the file doesn't exist (e.g. Windows).
+[include]
+	path = ~/.gitconfig.local
