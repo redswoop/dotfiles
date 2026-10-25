@@ -116,6 +116,14 @@ alias du='du -h'
 
 # fzf and zoxide shell integration
 # For zsh, these are loaded in .zshrc (after compinit)
+#
+# zoxide's "doctor" warns unless its prompt hook is the LAST one registered.
+# We can't satisfy that here: starship, iTerm2 integration, and .lcldevrc all
+# register prompt hooks after this file returns (and .shellrc is sourced
+# mid-file in both .bashrc and .zshrc). zoxide itself works fine regardless —
+# the check is a heuristic that false-positives on multi-hook setups. Disable
+# it cross-shell rather than chase per-platform ordering. https://github.com/ajeetdsouza/zoxide#configuration
+export _ZO_DOCTOR=0
 if [ -n "$BASH_VERSION" ]; then
     command -v fzf >/dev/null 2>&1 && eval "$(fzf --bash)"
     command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
@@ -124,6 +132,11 @@ fi
 # lazygit
 if command -v lazygit >/dev/null 2>&1; then
     alias lg='lazygit'
+fi
+
+# findmnt — real filesystems only, useful columns (skips cgroup/proc/snap-loop noise)
+if command -v findmnt >/dev/null 2>&1; then
+    alias mnt='findmnt --real -t nosquashfs -o TARGET,SOURCE,FSTYPE,SIZE,USE%,OPTIONS'
 fi
 
 # dotfiles management (bare git repo)
@@ -141,6 +154,7 @@ cheat() {
   🔍 rg ................... ripgrep (grep replacement)
   🔎 fd ................... find replacement
   ⚙️  jk ................... ps + ports + tree
+  🗂️  mnt .................. findmnt (real mounts)
   📈 btop / htop .......... top replacements
   🌳 lg ................... lazygit
   💾 dot .................. dotfiles git
