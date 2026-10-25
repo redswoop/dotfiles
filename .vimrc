@@ -11,7 +11,6 @@ set background=dark
 " habamax ships with Vim 9.0+; fall back silently on older vim (RHEL 8/9 etc.)
 silent! colorscheme habamax
 set number
-set relativenumber
 set cursorline
 set nowrap
 set showmatch
@@ -65,6 +64,14 @@ set autoread
 set textwidth=79
 set formatoptions+=j
 
+" Markdown: soft-wrap at word boundaries. `wrap` + `linebreak` is the
+" actual option pair — there is no `wordwrap`. textwidth=0 so vim doesn't
+" also hard-break at 79 while you're writing prose.
+augroup markdown_wrap
+    autocmd!
+    autocmd FileType markdown setlocal wrap linebreak breakindent textwidth=0
+augroup END
+
 " === Clipboard (works on Mac and Linux) ===
 if has('unnamedplus')
     set clipboard=unnamedplus
@@ -90,6 +97,12 @@ if !isdirectory($HOME . '/.vim/backup')
 endif
 
 " === Keymaps ===
+" Option-Backspace from Mac/iTerm (Option as Meta): DEL 0x7F with the high
+" bit set is 0xFF, which arrives as ÿ. Emacs/zsh treat that as
+" backward-kill-word; without this, vim just inserts the character.
+inoremap <Char-0xff> <C-W>
+cnoremap <Char-0xff> <C-W>
+
 " Clear search highlight
 nnoremap <C-L> :nohlsearch<CR><C-L>
 
