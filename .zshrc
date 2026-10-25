@@ -105,5 +105,3 @@ done
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-source ~/.lcldevrc

@@ -242,6 +242,30 @@ platform_extras() {
 info "dotfiles-bootstrap"
 echo
 
+# --- Machine-local config files ---
+# Untracked by design; the rc files source/include them if present. Create
+# empty ones with a header so the pattern is discoverable on a fresh box.
+ensure_local_files() {
+    if [[ ! -f "$HOME/.shellrc.local" ]]; then
+        info "Creating ~/.shellrc.local (machine-specific shell config)"
+        cat > "$HOME/.shellrc.local" <<'EOF'
+# shellrc.local — machine-specific shell config, NOT tracked by dotfiles.
+# Sourced last by ~/.shellrc in both bash and zsh. Put here: where software
+# lives on this box, hardware-specific aliases, work hooks, installer PATH lines.
+EOF
+    fi
+    if [[ ! -f "$HOME/.gitconfig.local" ]]; then
+        info "Creating ~/.gitconfig.local (machine-specific git config)"
+        cat > "$HOME/.gitconfig.local" <<'EOF'
+# Machine-local git config, NOT tracked by dotfiles. Included by ~/.gitconfig.
+# Credential helpers go here — e.g. run `gh auth setup-git` after `gh auth login`.
+EOF
+    fi
+}
+
+ensure_local_files
+echo
+
 if is_gitbash; then
     info "Detected git-bash (Windows)"
     echo

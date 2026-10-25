@@ -26,4 +26,5 @@ gh auth login
 ## Deliberately not tracked
 
 - `~/.claude/` — AI-agent memory/config. Personal context, not shell config; this repo is public.
+- `~/.shellrc.local` — machine-specific shell config (where software lives, hardware aliases). Sourced last by `.shellrc`.
 - `~/.gitconfig.local` — machine-specific git config (credential helpers). Pulled in via `[include]`.

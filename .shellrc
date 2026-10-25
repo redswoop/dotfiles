@@ -7,6 +7,9 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# rust (rustup) — only where installed
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
 # Package manager PATH setup
 if [ -n "${MSYSTEM:-}" ]; then
     # Scoop (git-bash on Windows) — convert Windows path to unix-style
@@ -185,3 +188,8 @@ if command -v starship >/dev/null 2>&1; then
         eval "$(starship init bash)"
     fi
 fi
+
+# Machine-local overrides — NOT tracked. Where this box keeps its software,
+# hardware-specific aliases, work hooks. Installers that want to append to
+# .zshrc/.bashrc should be redirected here instead. Sourced last so it wins.
+[ -f "$HOME/.shellrc.local" ] && . "$HOME/.shellrc.local"
