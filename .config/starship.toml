@@ -19,9 +19,9 @@ disabled = false
 style = "bold grape"
 
 [os.symbols]
-Macos = ""
+Macos = " "
 Linux = "🐧"
-Windows = ""
+Windows = " "
 
 [username]
 show_always = false
