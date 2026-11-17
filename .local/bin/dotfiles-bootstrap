@@ -227,10 +227,11 @@ install_jk() {
 # One coding font everywhere: JetBrains Mono, with Nerd Font glyphs for the
 # starship prompt / eza icons.
 #
-#   Linux        stock "JetBrains Mono" + "Symbols Nerd Font Mono" as a glyph
-#                fallback. Fontconfig stitches them together; the tracked
+#   Linux        stock "JetBrains Mono", then "Symbols Nerd Font Mono" (icons),
+#                FreeMono (misc symbols) and Noto Color Emoji as fallbacks.
+#                Fontconfig stitches them together; the tracked
 #                ~/.config/fontconfig/conf.d/10-jetbrains-nerd-symbols.conf
-#                also makes the pair the system `monospace`.
+#                also makes the chain the system `monospace`.
 #   macOS/Win    no fontconfig, so install the patched "JetBrainsMono Nerd
 #                Font" — one family name to pick in the terminal app.
 
@@ -244,15 +245,29 @@ install_fonts_linux() {
         return 0
     fi
 
-    if fc-list -q 'JetBrains Mono'; then
-        printf '  ✓ JetBrains Mono (already installed)\n'
-    elif command -v apt-get >/dev/null 2>&1 && command -v sudo >/dev/null 2>&1 \
-         && { sudo -n true 2>/dev/null || [[ -t 0 ]]; }; then
-        info "Installing JetBrains Mono (apt)..."
-        sudo apt-get install -y fonts-jetbrains-mono \
-            || warn "apt install failed — run: sudo apt install fonts-jetbrains-mono"
-    else
-        warn "JetBrains Mono not installed. Debian/Ubuntu: sudo apt install fonts-jetbrains-mono"
+    # family:apt-package. FreeMono covers the terminal-UI symbols JetBrains
+    # Mono lacks (⏵ ⎿ ⏺ ⏸ — Claude Code and friends draw with them); without
+    # it they render as tofu.
+    local spec fam pkg need=()
+    for spec in 'JetBrains Mono:fonts-jetbrains-mono' \
+                'FreeMono:fonts-freefont-ttf' \
+                'Noto Color Emoji:fonts-noto-color-emoji'; do
+        fam="${spec%%:*}" pkg="${spec##*:}"
+        if fc-list -q "$fam"; then
+            printf '  ✓ %s (already installed)\n' "$fam"
+        else
+            need+=("$pkg")
+        fi
+    done
+    if [[ ${#need[@]} -gt 0 ]]; then
+        if command -v apt-get >/dev/null 2>&1 && command -v sudo >/dev/null 2>&1 \
+           && { sudo -n true 2>/dev/null || [[ -t 0 ]]; }; then
+            info "Installing fonts (apt): ${need[*]}"
+            sudo apt-get install -y "${need[@]}" \
+                || warn "apt install failed — run: sudo apt install ${need[*]}"
+        else
+            warn "Missing fonts. Debian/Ubuntu: sudo apt install ${need[*]}"
+        fi
     fi
 
     if fc-list -q 'Symbols Nerd Font Mono'; then
