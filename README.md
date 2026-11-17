@@ -20,8 +20,9 @@ gh auth login
 
 - **Shell**: zsh/bash configs with shared `.shellrc`
 - **Prompt**: [Starship](https://starship.rs) with nerd font icons
+- **Font**: JetBrains Mono + Nerd Font glyphs everywhere. Linux: stock JetBrains Mono with Symbols Nerd Font as a fontconfig fallback (also the system `monospace`); macOS/Windows: the patched `JetBrainsMono Nerd Font`. Terminal configs tracked where they're plain files (`foot`)
 - **Tools**: eza, bat, delta, fd, ripgrep, fzf, zoxide, dust, htop, lazygit, jq, yq
-- **Bootstrap**: auto-installs everything via Homebrew (macOS/Linux) or Scoop (Windows)
+- **Bootstrap**: auto-installs everything via Homebrew (macOS/Linux) or Scoop (Windows), fonts included (Windows path is untested)
 
 ## Deliberately not tracked
 

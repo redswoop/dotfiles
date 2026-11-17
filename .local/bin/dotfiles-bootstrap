@@ -223,17 +223,100 @@ install_jk() {
     info "jk installed to ~/.local/bin/jk"
 }
 
-# --- Platform extras ---
+# --- Fonts ---
+# One coding font everywhere: JetBrains Mono, with Nerd Font glyphs for the
+# starship prompt / eza icons.
+#
+#   Linux        stock "JetBrains Mono" + "Symbols Nerd Font Mono" as a glyph
+#                fallback. Fontconfig stitches them together; the tracked
+#                ~/.config/fontconfig/conf.d/10-jetbrains-nerd-symbols.conf
+#                also makes the pair the system `monospace`.
+#   macOS/Win    no fontconfig, so install the patched "JetBrainsMono Nerd
+#                Font" — one family name to pick in the terminal app.
 
-platform_extras() {
-    if [[ "$(uname)" == "Darwin" ]]; then
-        if brew list --cask font-meslo-lg-nerd-font &>/dev/null; then
-            printf '  ✓ Nerd Font (already installed)\n'
+NERD_SYMBOLS_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/NerdFontsSymbolsOnly"
+
+install_fonts_linux() {
+    # No fontconfig = headless box; glyphs are the job of whatever terminal
+    # you ssh in from.
+    if ! command -v fc-list >/dev/null 2>&1; then
+        warn "No fontconfig (headless?) — skipping fonts"
+        return 0
+    fi
+
+    if fc-list -q 'JetBrains Mono'; then
+        printf '  ✓ JetBrains Mono (already installed)\n'
+    elif command -v apt-get >/dev/null 2>&1 && command -v sudo >/dev/null 2>&1 \
+         && { sudo -n true 2>/dev/null || [[ -t 0 ]]; }; then
+        info "Installing JetBrains Mono (apt)..."
+        sudo apt-get install -y fonts-jetbrains-mono \
+            || warn "apt install failed — run: sudo apt install fonts-jetbrains-mono"
+    else
+        warn "JetBrains Mono not installed. Debian/Ubuntu: sudo apt install fonts-jetbrains-mono"
+    fi
+
+    if fc-list -q 'Symbols Nerd Font Mono'; then
+        printf '  ✓ Symbols Nerd Font (already installed)\n'
+    else
+        info "Installing Symbols Nerd Font to ~/.local/share/fonts..."
+        local dest="$HOME/.local/share/fonts/NerdFontsSymbolsOnly" tmp ok=1
+        tmp="$(mktemp -d)"
+        mkdir -p "$dest"
+        if command -v xz >/dev/null 2>&1; then
+            curl -fsSL "$NERD_SYMBOLS_URL.tar.xz" -o "$tmp/sym.tar.xz" \
+                && tar -xJf "$tmp/sym.tar.xz" -C "$dest" --wildcards '*.ttf' || ok=0
+        elif command -v unzip >/dev/null 2>&1; then
+            curl -fsSL "$NERD_SYMBOLS_URL.zip" -o "$tmp/sym.zip" \
+                && unzip -qo "$tmp/sym.zip" '*.ttf' -d "$dest" || ok=0
         else
-            info "Installing Meslo Nerd Font..."
-            brew install --cask font-meslo-lg-nerd-font
+            ok=0
         fi
-        warn "Remember to set 'MesloLGS Nerd Font' in your terminal app"
+        rm -rf "$tmp"
+        if [[ $ok -eq 1 ]]; then
+            fc-cache -f "$HOME/.local/share/fonts"
+        else
+            warn "Couldn't fetch Symbols Nerd Font (need curl + xz or unzip): $NERD_SYMBOLS_URL.tar.xz"
+        fi
+    fi
+
+    # Terminals that take the fallback list themselves (foot: tracked
+    # ~/.config/foot/foot.ini) are already set. GNOME's needs a nudge.
+    warn "Terminal font: 'JetBrains Mono' (Ptyxis/GNOME Terminal: set it in the profile; icons come via fontconfig)"
+}
+
+install_fonts_macos() {
+    local cask=font-jetbrains-mono-nerd-font
+    if brew list --cask "$cask" &>/dev/null; then
+        printf '  ✓ JetBrainsMono Nerd Font (already installed)\n'
+    else
+        info "Installing JetBrainsMono Nerd Font..."
+        brew install --cask "$cask"
+    fi
+    warn "Remember to set 'JetBrainsMono Nerd Font' in your terminal app"
+}
+
+# Best effort, untested: no Windows box to try it on.
+install_fonts_scoop() {
+    if ! scoop bucket list 2>/dev/null | grep -q nerd-fonts; then
+        scoop bucket add nerd-fonts || { warn "Couldn't add Scoop nerd-fonts bucket — skipping fonts"; return 0; }
+    fi
+    if scoop list JetBrainsMono-NF 2>/dev/null | grep -q JetBrainsMono-NF; then
+        printf '  ✓ JetBrainsMono Nerd Font (already installed)\n'
+    else
+        info "Installing JetBrainsMono Nerd Font..."
+        scoop install JetBrainsMono-NF || warn "Font install failed: scoop install nerd-fonts/JetBrainsMono-NF"
+    fi
+    warn "Remember to set 'JetBrainsMono Nerd Font' in Windows Terminal (Settings → profile → Appearance)"
+}
+
+install_fonts() {
+    info "Installing fonts..."
+    if is_gitbash; then
+        install_fonts_scoop
+    elif [[ "$(uname)" == "Darwin" ]]; then
+        install_fonts_macos
+    else
+        install_fonts_linux
     fi
 }
 
@@ -277,6 +360,9 @@ if is_gitbash; then
     echo
 
     warn "Zsh plugins skipped (not applicable on git-bash)"
+    echo
+
+    install_fonts
 else
     check_linux_prereqs
     echo
@@ -293,7 +379,7 @@ else
     install_jk
     echo
 
-    platform_extras
+    install_fonts
 fi
 
 echo
